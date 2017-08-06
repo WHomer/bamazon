@@ -61,6 +61,8 @@ function sellItems(itemID, qtyRequested){
 		//if equal to or less than process order and display cost
 		if (qtyRequested <= items[0].stock_qty){
 			//run query to update qty
+			updateItemQTY(itemID, qtyRequested);
+			//calculate total cost of items
 			var totalCost = items[0].price * qtyRequested;
 			//display cost
 			console.log('Total amount owed is: $' + totalCost);
@@ -69,6 +71,10 @@ function sellItems(itemID, qtyRequested){
 			console.log('There was a problem with your request, you either requested an invalid qty or invalid ID');
 		}
 	});
+}
+
+function updateItemQTY(itemID, qtyRequested){
+	var query = 'UPDATE products SET stock_qty = 450 WHERE item_id = 3'
 }
 
 function createProduct(newProduct){
