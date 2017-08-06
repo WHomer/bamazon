@@ -61,7 +61,9 @@ function sellItems(itemID, qtyRequested){
 		//if equal to or less than process order and display cost
 		if (qtyRequested <= items[0].stock_qty){
 			//run query to update qty
-			updateItemQTY(itemID, qtyRequested);
+			//determines the new qty of items
+			var newQTY = items[0].stock_qty - qtyRequested;
+			updateItemQTY(itemID, newQTY);
 			//calculate total cost of items
 			var totalCost = items[0].price * qtyRequested;
 			//display cost
@@ -72,9 +74,10 @@ function sellItems(itemID, qtyRequested){
 		}
 	});
 }
-
-function updateItemQTY(itemID, qtyRequested){
-	var query = 'UPDATE products SET stock_qty = 450 WHERE item_id = 3'
+//function to update a record with the sale of items
+function updateItemQTY(itemID, newQTY){
+	var query = 'UPDATE products SET stock_qty = '+ newQTY + ' WHERE item_id =' + itemID;
+	connection.query(query);
 }
 
 function createProduct(newProduct){
