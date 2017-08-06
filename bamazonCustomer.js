@@ -10,8 +10,25 @@ var connection = mysql.createConnection({
 	database: 'bamazondb'
 })
 
+//gets all products from products table and displays to the console.
 function displayItems(){
-  
+	//makes the query call
+	var query = 'SELECT item_id, product_name, department_name, price, stock_qty FROM products'
+	connection.query(query, function(err, items){
+		//display all the details to the page
+		console.log(items);
+		//cycle through the items and display each item
+		//console.log('id		Product					department			price				qty')
+		for (var i =0; i < items.length; i++){
+			var print = items[i].item_id +'	';
+			print += items[i].product_name +'	';
+			print += items[i].department_name +'	';
+			print += items[i].price +'	';
+			print += items[i].stock_qty;
+			console.log(print);
+		}
+	});
+	connection.end();
 }
 
 connection.connect(function(err) {
@@ -22,6 +39,7 @@ connection.connect(function(err) {
 		stockQty: 500
 	}
 	//createProduct(newProduct);
+	displayItems();
 })
 
 
