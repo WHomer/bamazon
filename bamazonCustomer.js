@@ -28,7 +28,7 @@ function displayItems(){
 			console.log(print);
 		}
 	});
-	connection.end();
+	//connection.end();
 }
 
 // connection.connect(function(err) {
@@ -46,15 +46,29 @@ function displayItems(){
 function userPrompt(){
 	//ask the user what they would like to buy (by id)
 
+	itemID = 3;
 	//ask the user how many they would like to buy
+	qtyRequested = 3;
+	//call sellItems() to query the db
+	sellItems(itemID, qtyRequested);
 }
 
 //function to sell the items by completing the order
 function sellItems(itemID, qtyRequested){
 	//check qty available by itemID and compare qty requested
+	var query = 'SELECT item_id, product_name, department_name, price, stock_qty FROM products WHERE ?';
+	connection.query(query, {item_id: itemID}, function(err, items){
 		//if equal to or less than process order and display cost
-
-		//if greater than stock qty display error message
+		if (qtyRequested <= items[0].stock_qty){
+			//run query to update qty
+			var totalCost = items[0].price * qtyRequested;
+			//display cost
+			console.log('Total amount owed is: $' + totalCost);
+		} else {
+			//if greater than stock qty display error message
+			console.log('There was a problem with your request, you either requested an invalid qty or invalid ID');
+		}
+	});
 }
 
 function createProduct(newProduct){
@@ -67,7 +81,7 @@ function createProduct(newProduct){
 			stock_qty: newProduct.stockQty
 		}
 	)
-	connection.end();
+	//connection.end();
 }
 
 
