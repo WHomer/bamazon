@@ -12,23 +12,26 @@ var connection = mysql.createConnection({
 
 //gets all products from products table and displays to the console.
 function displayItems(){
-	//makes the query call
-	var query = 'SELECT item_id, product_name, department_name, price, stock_qty FROM products'
-	connection.query(query, function(err, items){
-		//display all the details to the page
-		//console.log(items);
-		//cycle through the items and display each item
-		//console.log('id		Product					department			price				qty')
-		for (var i =0; i < items.length; i++){
-			var print = items[i].item_id +'	';
-			print += items[i].product_name +'		';
-			print += items[i].department_name +'		';
-			print += items[i].price +'		';
-			print += items[i].stock_qty;
-			console.log(print);
-		}
+	return new Promise(function(resolve, reject) {
+		// do a thing, possibly async, then…
+		//makes the query call
+		var query = 'SELECT item_id, product_name, department_name, price, stock_qty FROM products'
+		connection.query(query, function(err, items){
+			//display all the details to the page
+			//console.log(items);
+			//cycle through the items and display each item
+			//console.log('id		Product					department			price				qty')
+			for (var i =0; i < items.length; i++){
+				var print = items[i].item_id +'	';
+				print += items[i].product_name +'		';
+				print += items[i].department_name +'		';
+				print += items[i].price +'		';
+				print += items[i].stock_qty;
+				console.log(print);
+			}
+		});
+		//connection.end();
 	});
-	//connection.end();
 }
 
 // connection.connect(function(err) {
@@ -45,12 +48,38 @@ function displayItems(){
 //prompt for user input to determine what they want to do
 function userPrompt(){
 	//ask the user what they would like to buy (by id)
-
-	itemID = 3;
-	//ask the user how many they would like to buy
-	qtyRequested = 3;
-	//call sellItems() to query the db
-	sellItems(itemID, qtyRequested);
+	inquirer
+    .prompt([
+      {
+        name: "itemID",
+        type: "input",
+        message: "Enter ItemID of item to purchase: ",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      },
+      {
+        name: "qtyRequested",
+        type: "input",
+        message: "Enter qty of item to purchase: ",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      }
+    ])
+  .then(function(answer) {
+		itemID = answer.itemID;
+		//ask the user how many they would like to buy
+		qtyRequested = answer.qtyRequested;
+		//call sellItems() to query the db
+		sellItems(itemID, qtyRequested);
+  });
 }
 
 //function to sell the items by completing the order
@@ -95,5 +124,11 @@ function createProduct(newProduct){
 
 
 
-displayItems();
-userPrompt();
+// promise.then(function(result) {
+//   console.log(result); // "Stuff worked!"
+// }, function(err) {
+//   console.log(err); // Error: "It broke"
+// });
+
+displayItems().then(userPrompt());
+
